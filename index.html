@@ -1,12 +1,449 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-  <head>
+<head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f4f1e9">
   <title>重生療癒｜生活覺察回饋</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #f4f1e9;
+      color: #4b5148;
+      font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC",
+        "PingFang TC", "Microsoft JhengHei", sans-serif;
+      line-height: 1.75;
+    }
+
+    .page {
+      width: min(100%, 680px);
+      margin: 0 auto;
+      padding: 32px 18px 56px;
+    }
+
+    .header {
+      text-align: center;
+      padding: 22px 10px 28px;
+    }
+
+    .brand {
+      font-size: 14px;
+      letter-spacing: 0.12em;
+      color: #788174;
+      margin-bottom: 14px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 600;
+      color: #3f5144;
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      font-size: 18px;
+      color: #667064;
+    }
+
+    .intro,
+    .notice,
+    .card,
+    .success {
+      background: rgba(255, 255, 255, 0.78);
+      border-radius: 18px;
+      padding: 22px 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 18px rgba(70, 80, 68, 0.06);
+    }
+
+    .intro {
+      text-align: center;
+    }
+
+    .intro p {
+      margin: 5px 0;
+    }
+
+    .theme {
+      margin-top: 18px;
+      padding: 13px 16px;
+      border-radius: 14px;
+      background: #edf0e8;
+      color: #536052;
+    }
+
+    .question-number {
+      font-size: 13px;
+      color: #899185;
+      margin-bottom: 5px;
+    }
+
+    .question {
+      font-size: 18px;
+      font-weight: 600;
+      color: #445147;
+      margin-bottom: 13px;
+    }
+
+    .hint {
+      font-size: 14px;
+      color: #81877f;
+      margin-top: -7px;
+      margin-bottom: 13px;
+    }
+
+    input[type="text"],
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid #d8ddd3;
+      border-radius: 12px;
+      padding: 13px 14px;
+      background: #fff;
+      color: #424942;
+      font-size: 16px;
+      font-family: inherit;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 105px;
+      resize: vertical;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: #899b86;
+      box-shadow: 0 0 0 3px rgba(137, 155, 134, 0.12);
+    }
+
+    .options {
+      display: grid;
+      gap: 9px;
+    }
+
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      background: #f9faf7;
+      border: 1px solid #e2e6de;
+      border-radius: 12px;
+      padding: 11px 12px;
+      cursor: pointer;
+    }
+
+    .option input {
+      margin-top: 5px;
+      accent-color: #71836f;
+    }
+
+    .notice {
+      font-size: 14px;
+      color: #6d746b;
+    }
+
+    .notice strong {
+      color: #536052;
+    }
+
+    button {
+      width: 100%;
+      border: 0;
+      border-radius: 14px;
+      padding: 15px 20px;
+      font-size: 17px;
+      font-weight: 600;
+      background: #667b67;
+      color: white;
+      cursor: pointer;
+    }
+
+    button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
+    .message {
+      text-align: center;
+      margin-top: 14px;
+      font-size: 14px;
+      min-height: 24px;
+    }
+
+    .error {
+      color: #a34f4f;
+    }
+
+    .success {
+      display: none;
+      text-align: center;
+      padding-top: 32px;
+      padding-bottom: 32px;
+    }
+
+    .success h2 {
+      color: #536652;
+      margin-top: 0;
+    }
+
+    .footer {
+      text-align: center;
+      color: #91978e;
+      font-size: 13px;
+      padding-top: 12px;
+    }
+  </style>
 </head>
+
 <body>
-  <h1>🌿 重生療癒｜生活覺察</h1>
-  <h2>今天，我看見了什麼？</h2>
+  <main class="page">
+
+    <header class="header">
+      <div class="brand">生命之歌｜伊卡</div>
+      <h1>🌿 重生療癒｜生活覺察</h1>
+      <div class="subtitle">今天，我看見了什麼？</div>
+    </header>
+
+    <section class="intro">
+      <p>今天的生活裡，有沒有哪一個小小的瞬間，讓你注意到了自己？</p>
+      <p>不需要很重要，也不用整理得很好。</p>
+      <p>一頓飯、一句話、一個反應、一個選擇，都可以。</p>
+      <p>花一兩分鐘，把它留下來。</p>
+
+      <div class="theme">
+        2026年10月主題｜開始為自己做選擇
+      </div>
+    </section>
+
+    <form id="feedbackForm">
+
+      <section class="card">
+        <div class="question">你的稱呼</div>
+        <div class="hint">填寫你平常在團練中使用的名字即可。</div>
+        <input
+          id="participantName"
+          type="text"
+          maxlength="50"
+          placeholder="例如：小美"
+          required
+        >
+      </section>
+
+      <section class="card">
+        <div class="question-number">01｜生活發生</div>
+        <div class="question">今天發生了什麼？</div>
+        <div class="hint">一件很小的事情也可以，簡單寫一兩句就好。</div>
+        <textarea
+          id="answer1"
+          placeholder="例如：早上很趕，但家人突然請我幫忙一件事……"
+          required
+        ></textarea>
+      </section>
+
+      <section class="card">
+        <div class="question-number">02｜我的反應</div>
+        <div class="question">當下，我第一個自然反應是什麼？</div>
+        <div class="hint">可以複選。</div>
+
+        <div class="options" id="reactionOptions">
+          <label class="option"><input type="checkbox" value="馬上去做">馬上去做</label>
+          <label class="option"><input type="checkbox" value="先配合別人">先配合別人</label>
+          <label class="option"><input type="checkbox" value="忍住自己的感受">忍住自己的感受</label>
+          <label class="option"><input type="checkbox" value="趕快把事情處理掉">趕快把事情處理掉</label>
+          <label class="option"><input type="checkbox" value="想逃開／不想面對">想逃開／不想面對</label>
+          <label class="option"><input type="checkbox" value="猶豫很久">猶豫很久</label>
+          <label class="option"><input type="checkbox" value="先停下來想一下">先停下來想一下</label>
+          <label class="option"><input type="checkbox" value="說出自己的想法">說出自己的想法</label>
+          <label class="option"><input type="checkbox" value="做了一個和平常不同的選擇">做了一個和平常不同的選擇</label>
+          <label class="option"><input type="checkbox" value="其他">其他</label>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="question-number">03｜我的看見</div>
+        <div class="question">這件小事，讓我看見自己什麼？</div>
+        <div class="hint">一句話也可以。</div>
+        <textarea
+          id="answer3"
+          placeholder="例如：我發現自己只要別人開口，就會先把自己的事情放下。"
+          required
+        ></textarea>
+      </section>
+
+      <section class="card">
+        <div class="question-number">04｜我現在的位置</div>
+        <div class="question">現在的我，比較接近哪一個狀態？</div>
+
+        <div class="options">
+          <label class="option"><input type="radio" name="stage" value="🌱 我剛剛才注意到這件事" required>🌱 我剛剛才注意到這件事</label>
+          <label class="option"><input type="radio" name="stage" value="🌿 我開始看懂自己為什麼會這樣">🌿 我開始看懂自己為什麼會這樣</label>
+          <label class="option"><input type="radio" name="stage" value="🌳 我想試一次不同的做法">🌳 我想試一次不同的做法</label>
+          <label class="option"><input type="radio" name="stage" value="✨ 我真的做了一次不一樣的選擇">✨ 我真的做了一次不一樣的選擇</label>
+          <label class="option"><input type="radio" name="stage" value="🌀 我知道了，但我現在還是卡住">🌀 我知道了，但我現在還是卡住</label>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="question-number">10月主題覺察</div>
+        <div class="question">
+          回頭看看剛才這件小事：這一次，我比較像是在按照原來的習慣，還是真的有意識地做了一次選擇？
+        </div>
+
+        <div class="options">
+          <label class="option"><input type="radio" name="monthly" value="幾乎完全照原來的習慣" required>幾乎完全照原來的習慣</label>
+          <label class="option"><input type="radio" name="monthly" value="我有注意到，但最後還是照原來方式">我有注意到，但最後還是照原來方式</label>
+          <label class="option"><input type="radio" name="monthly" value="我停下來想過，並有意識地選擇照原來方式">我停下來想過，並有意識地選擇照原來方式</label>
+          <label class="option"><input type="radio" name="monthly" value="我做了一點和平常不同的選擇">我做了一點和平常不同的選擇</label>
+          <label class="option"><input type="radio" name="monthly" value="我很清楚地選了自己真正想要的">我很清楚地選了自己真正想要的</label>
+          <label class="option"><input type="radio" name="monthly" value="我現在還不知道">我現在還不知道</label>
+        </div>
+      </section>
+
+      <section class="card">
+        <div class="question">💬 還有什麼，是你想讓伊卡知道的？</div>
+        <div class="hint">沒有也沒關係，可以直接送出。</div>
+        <textarea
+          id="additionalNote"
+          placeholder="想多說一點的話，可以留在這裡。"
+        ></textarea>
+      </section>
+
+      <section class="notice">
+        <strong>關於你的回饋</strong><br>
+        這裡的內容會由伊卡閱讀與整理，作為第三週團練整合與深化的素材，
+        並不是即時的一對一諮詢。團練分享原則上會以匿名方式整理共同模式；
+        若需要使用可辨識個人的完整故事或原文，會另外詢問你的同意。
+      </section>
+
+      <button id="submitButton" type="submit">送出今天的覺察</button>
+      <div id="formMessage" class="message"></div>
+
+    </form>
+
+    <section id="successBox" class="success">
+      <h2>🌿 我收到你的回饋了</h2>
+      <p>謝謝你把今天生活裡的一個小小看見帶回來。</p>
+      <p>不需要急著改變，也不需要每一次都做得更好。</p>
+      <p>先看見，就已經讓我們有機會開始理解自己。</p>
+      <p>我會把大家這段時間的回饋慢慢收集起來，第三週我們再一起回來看看，這個月的練習，把我們帶到了哪裡。</p>
+      <p>—— 伊卡</p>
+    </section>
+
+    <div class="footer">生命之歌｜重生療癒循環系統</div>
+
+  </main>
+
+  <script>
+    const SUPABASE_URL = "https://vysguxmncemrbujjmjby.supabase.co/rest/v1/";
+    const SUPABASE_KEY = "sb_publishable_JVbYICU0xkVuXN8JlQBgHA_-P6Id5Mr";
+
+    const form = document.getElementById("feedbackForm");
+    const button = document.getElementById("submitButton");
+    const message = document.getElementById("formMessage");
+    const successBox = document.getElementById("successBox");
+
+    const savedName = localStorage.getItem("rebirthParticipantName");
+    if (savedName) {
+      document.getElementById("participantName").value = savedName;
+    }
+
+    form.addEventListener("submit", async function (event) {
+      event.preventDefault();
+
+      const participantName =
+        document.getElementById("participantName").value.trim();
+
+      const answer1 =
+        document.getElementById("answer1").value.trim();
+
+      const reactions = Array.from(
+        document.querySelectorAll("#reactionOptions input:checked")
+      ).map(item => item.value);
+
+      const answer3 =
+        document.getElementById("answer3").value.trim();
+
+      const stage =
+        document.querySelector('input[name="stage"]:checked');
+
+      const monthly =
+        document.querySelector('input[name="monthly"]:checked');
+
+      const additionalNote =
+        document.getElementById("additionalNote").value.trim();
+
+      if (reactions.length === 0) {
+        message.textContent = "請選擇至少一個「第一個自然反應」。";
+        message.className = "message error";
+        return;
+      }
+
+      if (!stage || !monthly) {
+        message.textContent = "還有題目尚未完成，請再確認一下。";
+        message.className = "message error";
+        return;
+      }
+
+      button.disabled = true;
+      button.textContent = "正在送出…";
+      message.textContent = "";
+
+      const payload = {
+        participant_name: participantName,
+        theme_month: "2026-10",
+        theme_title: "開始為自己做選擇",
+        answer_1: answer1,
+        answer_2: reactions.join("｜"),
+        answer_3: answer3,
+        answer_4: stage.value,
+        monthly_answer: monthly.value,
+        additional_note: additionalNote
+      };
+
+      try {
+        const response = await fetch(
+          `${SUPABASE_URL}/rest/v1/feedback_submissions`,
+          {
+            method: "POST",
+            headers: {
+              "apikey": SUPABASE_KEY,
+              "Content-Type": "application/json",
+              "Prefer": "return=minimal"
+            },
+            body: JSON.stringify(payload)
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("資料送出失敗");
+        }
+
+        localStorage.setItem(
+          "rebirthParticipantName",
+          participantName
+        );
+
+        form.style.display = "none";
+        successBox.style.display = "block";
+        window.scrollTo({ top: 0, behavior: "smooth" });
+
+      } catch (error) {
+        message.textContent =
+          "目前沒有成功送出，請稍後再試一次。";
+        message.className = "message error";
+        button.disabled = false;
+        button.textContent = "送出今天的覺察";
+      }
+    });
+  </script>
+
 </body>
 </html>
