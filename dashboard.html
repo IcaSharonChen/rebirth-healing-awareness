@@ -286,6 +286,18 @@
       </p>
 
     </section>
+    <section class="card">
+  <h2>🌱 每位同行者｜個人生命軌跡</h2>
+
+  <p>
+    從每一次生活裡的小小看見，
+    慢慢看見一個人正在走過的路。
+  </p>
+
+  <div id="participantJourney">
+    <p>個人生命軌跡資料將顯示在這裡。</p>
+  </div>
+    </section>
 
   </main>
 
@@ -409,7 +421,46 @@ async function loadDashboard() {
     }
 
     const rows = await response.json();
+const participantJourney = document.getElementById("participantJourney");
+    if (rows.length === 0) {
+  participantJourney.innerHTML =
+    "<p>這個月份目前還沒有同行者的回饋資料。</p>";
+    }
+    else {
+  const journeyByParticipant = {};
+      rows.forEach(row => {
+  const name = row.participant_name?.trim();
 
+  if (!name) return;
+
+  if (!journeyByParticipant[name]) {
+    journeyByParticipant[name] = [];
+  }
+
+  journeyByParticipant[name].push(row);
+});
+      participantJourney.innerHTML = Object.entries(journeyByParticipant)
+  .map(([name, entries]) => {
+    const latest = entries[0];
+
+    return `
+      <div class="journey-item">
+        <h3>🌿 ${name}</h3>
+        <p>本月回饋：${entries.length} 次</p>
+        <p><strong>最近的生活情境：</strong>${latest.answer_1 || "—"}</p>
+<p><strong>最近的反應／慣性：</strong>${latest.answer_2 || "—"}</p>
+<p><strong>最近的看見：</strong>${latest.answer_3 || "—"}</p>
+<p><strong>目前所在階段：</strong>${latest.answer_4 || "—"}</p>
+<p><strong>本月選擇狀態：</strong>${latest.monthly_answer || "—"}</p>
+${latest.additional_note
+  ? `<p><strong>想讓伊卡知道：</strong>${latest.additional_note}</p>`
+  : ""
+}
+      </div>
+    `;
+  })
+  .join("");
+      
     const participantNames =
       new Set(
         rows
