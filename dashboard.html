@@ -439,9 +439,11 @@ function firstValue(data) {
 
 
 async function loadDashboard() {
-if (!accessToken) 
-{
-  return;
+if (!accessToken) {
+    loading.style.display = "none";
+    dashboard.style.display = "none";
+    errorBox.style.display = "none";
+    return;
 }
   const month = monthSelect.value;
 
