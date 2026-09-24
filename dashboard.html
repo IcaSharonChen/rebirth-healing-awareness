@@ -314,6 +314,22 @@ const SUPABASE_URL =
 
 const SUPABASE_KEY =
   "sb_publishable_JVbYICU0xkVuXN8JlQBgHA_-P6Id5Mr";
+  let accessToken = null;
+
+const loginBox =
+  document.getElementById("loginBox");
+
+const loginEmail =
+  document.getElementById("loginEmail");
+
+const loginPassword =
+  document.getElementById("loginPassword");
+
+const loginButton =
+  document.getElementById("loginButton");
+
+const loginMessage =
+  document.getElementById("loginMessage");
 
 const monthSelect =
   document.getElementById("monthSelect");
@@ -395,7 +411,10 @@ function firstValue(data) {
 
 
 async function loadDashboard() {
-
+if (!accessToken) 
+{
+  return;
+}
   const month = monthSelect.value;
 
   loading.style.display = "block";
@@ -542,7 +561,47 @@ ${latest.additional_note
 
 }
 
+loginButton.addEventListener("click", async function () {
+  const email = loginEmail.value.trim();
+  const password = loginPassword.value;
 
+  loginMessage.textContent = "登入中……";
+
+  try {
+    const response = await fetch(
+      `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
+      {
+        method: "POST",
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password
+        })
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok || !data.access_token) {
+      throw new Error("Email 或密碼不正確");
+    }
+
+    accessToken = data.access_token;
+
+    loginMessage.textContent = "";
+    loginBox.style.display = "none";
+
+    await loadDashboard();
+
+  } catch (error) {
+    accessToken = null;
+    loginMessage.textContent =
+      "登入失敗：" + error.message;
+  }
+});
 monthSelect.addEventListener(
   "change",
   loadDashboard
