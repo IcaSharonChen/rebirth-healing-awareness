@@ -408,8 +408,7 @@ async function loadDashboard() {
       `${SUPABASE_URL}/rest/v1/participant_feedback_overview?theme_month=eq.${encodeURIComponent(month)}&select=*`,
       {
         headers: {
-          "apikey": SUPABASE_KEY,
-          "Authorization": `Bearer ${SUPABASE_KEY}`
+          "apikey": SUPABASE_KEY
         }
       }
     );
