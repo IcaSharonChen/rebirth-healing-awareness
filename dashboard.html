@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>重生療癒｜第三週團練整合</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #f7f6f2;
+      color: #3f443f;
+      font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC",
+        "Microsoft JhengHei", sans-serif;
+      line-height: 1.7;
+    }
+
+    .container {
+      width: min(920px, 92%);
+      margin: 0 auto;
+      padding: 36px 0 60px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      color: #7b8d79;
+      font-size: 14px;
+      letter-spacing: 2px;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 700;
+      color: #38453a;
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      color: #777;
+      font-size: 15px;
+    }
+
+    .month-box {
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 18px rgba(0,0,0,.05);
+    }
+
+    .month-box label {
+      display: block;
+      font-size: 13px;
+      color: #777;
+      margin-bottom: 6px;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d9ddd7;
+      border-radius: 10px;
+      background: #fff;
+      font-size: 16px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .summary-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 18px;
+      text-align: center;
+      box-shadow: 0 4px 18px rgba(0,0,0,.05);
+    }
+
+    .summary-number {
+      font-size: 30px;
+      font-weight: 700;
+      color: #647a65;
+    }
+
+    .summary-label {
+      color: #777;
+      font-size: 14px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 18px rgba(0,0,0,.05);
+    }
+
+    .card h2 {
+      margin: 0 0 12px;
+      color: #536654;
+      font-size: 19px;
+    }
+
+    .item {
+      padding: 10px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .item:last-child {
+      border-bottom: none;
+    }
+
+    .count {
+      float: right;
+      color: #8a8a8a;
+      font-size: 13px;
+    }
+
+    .empty {
+      color: #999;
+      font-size: 14px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px 10px;
+      color: #777;
+    }
+
+    .error {
+      background: #fff2f2;
+      border-radius: 12px;
+      padding: 14px;
+      color: #a44;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    .integration {
+      background: #eef3ed;
+      border-radius: 18px;
+      padding: 20px;
+      margin-top: 24px;
+    }
+
+    .integration h2 {
+      margin-top: 0;
+      color: #4f6652;
+    }
+
+    .integration p {
+      margin: 10px 0;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 30px;
+      color: #999;
+      font-size: 13px;
+    }
+
+    @media (min-width: 700px) {
+      .summary-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <header class="header">
+    <div class="eyebrow">生命之歌｜重生療癒循環系統</div>
+    <h1>🌿 第三週團練整合</h1>
+    <div class="subtitle">
+      從同行者的生活回饋，看見這個月真正走到哪裡
+    </div>
+  </header>
+
+  <div class="month-box">
+    <label for="monthSelect">查看月份</label>
+    <select id="monthSelect">
+      <option value="2026-10">2026 年 10 月｜開始為自己做選擇</option>
+    </select>
+  </div>
+
+  <div id="errorBox" class="error"></div>
+
+  <div id="loading" class="loading">
+    正在整理同行者的回饋……
+  </div>
+
+  <main id="dashboard" style="display:none;">
+
+    <section class="summary-grid">
+
+      <div class="summary-card">
+        <div id="feedbackCount" class="summary-number">0</div>
+        <div class="summary-label">回饋總數</div>
+      </div>
+
+      <div class="summary-card">
+        <div id="participantCount" class="summary-number">0</div>
+        <div class="summary-label">回饋人數</div>
+      </div>
+
+      <div class="summary-card">
+        <div id="situationCount" class="summary-number">0</div>
+        <div class="summary-label">生活覺察</div>
+      </div>
+
+      <div class="summary-card">
+        <div id="insightCount" class="summary-number">0</div>
+        <div class="summary-label">新的看見</div>
+      </div>
+
+    </section>
+
+    <section class="card">
+      <h2>🌿 大家最近遇見了什麼？</h2>
+      <div id="situations"></div>
+    </section>
+
+    <section class="card">
+      <h2>🔄 常出現的反應與慣性</h2>
+      <div id="reactions"></div>
+    </section>
+
+    <section class="card">
+      <h2>✨ 同行者的新看見</h2>
+      <div id="insights"></div>
+    </section>
+
+    <section class="card">
+      <h2>🌱 大家目前走到哪裡？</h2>
+      <div id="stages"></div>
+    </section>
+
+    <section class="card">
+      <h2>🧭 本月選擇狀態</h2>
+      <div id="monthlyProgress"></div>
+    </section>
+
+    <section class="integration">
+
+      <h2>第三週｜伊卡整合框架</h2>
+
+      <p>
+        ① 本月大家最常遇到的生活情境：
+        <strong id="topSituation">—</strong>
+      </p>
+
+      <p>
+        ② 最明顯的共同反應／慣性：
+        <strong id="topReaction">—</strong>
+      </p>
+
+      <p>
+        ③ 這段時間開始出現的新看見：
+        <strong id="topInsight">—</strong>
+      </p>
+
+      <p>
+        ④ 大家目前主要走到的階段：
+        <strong id="topStage">—</strong>
+      </p>
+
+      <p>
+        ⑤ 本月「開始為自己做選擇」目前的進展：
+        <strong id="topMonthly">—</strong>
+      </p>
+
+    </section>
+
+  </main>
+
+  <footer>
+    生命之歌｜重生療癒循環系統
+  </footer>
+
+</div>
+
+<script>
+
+const SUPABASE_URL =
+  "https://vysguxmncemrbujmjby.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_JVbYICU0xkVuXN8JlQBgHA_-P6Id5Mr";
+
+const monthSelect =
+  document.getElementById("monthSelect");
+
+const loading =
+  document.getElementById("loading");
+
+const dashboard =
+  document.getElementById("dashboard");
+
+const errorBox =
+  document.getElementById("errorBox");
+
+
+function valid(value) {
+  return value !== null &&
+         value !== undefined &&
+         String(value).trim() !== "";
+}
+
+
+function countValues(rows, field) {
+
+  const map = {};
+
+  rows.forEach(row => {
+
+    if (!valid(row[field])) return;
+
+    const value = String(row[field]).trim();
+
+    map[value] = (map[value] || 0) + 1;
+
+  });
+
+  return Object.entries(map)
+    .sort((a, b) => b[1] - a[1]);
+
+}
+
+
+function renderList(elementId, data) {
+
+  const el = document.getElementById(elementId);
+
+  if (!data.length) {
+    el.innerHTML =
+      '<div class="empty">目前還沒有足夠的回饋。</div>';
+    return;
+  }
+
+  el.innerHTML = data.map(([text, count]) => `
+    <div class="item">
+      ${escapeHtml(text)}
+      <span class="count">${count} 次</span>
+    </div>
+  `).join("");
+
+}
+
+
+function escapeHtml(text) {
+
+  const div = document.createElement("div");
+  div.textContent = text;
+
+  return div.innerHTML;
+
+}
+
+
+function firstValue(data) {
+
+  if (!data.length) return "目前尚未形成明顯共同訊息";
+
+  return data[0][0];
+
+}
+
+
+async function loadDashboard() {
+
+  const month = monthSelect.value;
+
+  loading.style.display = "block";
+  dashboard.style.display = "none";
+  errorBox.style.display = "none";
+
+  try {
+
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/feedback_overview?theme_month=eq.${encodeURIComponent(month)}&select=*`,
+      {
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization": `Bearer ${SUPABASE_KEY}`
+        }
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `讀取資料失敗（${response.status}）`
+      );
+    }
+
+    const rows = await response.json();
+
+    const participantNames =
+      new Set(
+        rows
+          .map(row => row.participant_name)
+          .filter(valid)
+      );
+
+    const situations =
+      countValues(rows, "answer_1");
+
+    const reactions =
+      countValues(rows, "answer_2");
+
+    const insights =
+      countValues(rows, "answer_3");
+
+    const stages =
+      countValues(rows, "answer_4");
+
+    const monthly =
+      countValues(rows, "monthly_answer");
+
+
+    document.getElementById("feedbackCount")
+      .textContent = rows.length;
+
+    document.getElementById("participantCount")
+      .textContent = participantNames.size;
+
+    document.getElementById("situationCount")
+      .textContent = situations.reduce(
+        (sum, item) => sum + item[1], 0
+      );
+
+    document.getElementById("insightCount")
+      .textContent = insights.reduce(
+        (sum, item) => sum + item[1], 0
+      );
+
+
+    renderList("situations", situations);
+    renderList("reactions", reactions);
+    renderList("insights", insights);
+    renderList("stages", stages);
+    renderList("monthlyProgress", monthly);
+
+
+    document.getElementById("topSituation")
+      .textContent = firstValue(situations);
+
+    document.getElementById("topReaction")
+      .textContent = firstValue(reactions);
+
+    document.getElementById("topInsight")
+      .textContent = firstValue(insights);
+
+    document.getElementById("topStage")
+      .textContent = firstValue(stages);
+
+    document.getElementById("topMonthly")
+      .textContent = firstValue(monthly);
+
+
+    loading.style.display = "none";
+    dashboard.style.display = "block";
+
+  }
+
+  catch (error) {
+
+    loading.style.display = "none";
+
+    errorBox.textContent =
+      "目前無法讀取整合資料：" + error.message;
+
+    errorBox.style.display = "block";
+
+  }
+
+}
+
+
+monthSelect.addEventListener(
+  "change",
+  loadDashboard
+);
+
+
+loadDashboard();
+
+</script>
+
+</body>
+</html>
