@@ -489,24 +489,56 @@ const participantJourney = document.getElementById("participantJourney");
 });
       participantJourney.innerHTML = Object.entries(journeyByParticipant)
   .map(([name, entries]) => {
-    const latest = entries[0];
+    const sortedEntries = [...entries].sort((a, b) =>
+  new Date(a.created_at) - new Date(b.created_at)
+);
 
-    return `
-      <div class="journey-item">
-        <h3>🌿 ${name}</h3>
-        <p>本月回饋：${entries.length} 次</p>
-        <p><strong>最近的生活情境：</strong>${latest.answer_1 || "—"}</p>
-<p><strong>最近的反應／慣性：</strong>${latest.answer_2 || "—"}</p>
-<p><strong>最近的看見：</strong>${latest.answer_3 || "—"}</p>
-<p><strong>目前所在階段：</strong>${latest.answer_4 || "—"}</p>
-<p><strong>本月選擇狀態：</strong>${latest.monthly_answer || "—"}</p>
-${latest.additional_note
-  ? `<p><strong>想讓伊卡知道：</strong>${latest.additional_note}</p>`
-  : ""
-}
-      </div>
-    `;
-  })
+const feedbackHistory = sortedEntries.map((entry, index) => {
+  const date = entry.created_at
+    ? new Date(entry.created_at).toLocaleString("zh-TW", {
+        timeZone: "Asia/Taipei",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      })
+    : "";
+
+  return `
+    <div style="
+      margin-top: 24px;
+      padding-top: 20px;
+      border-top: 1px solid #e4e7df;
+    ">
+      <p><strong>第 ${index + 1} 次回饋${date ? `｜${date}` : ""}</strong></p>
+
+      <p><strong>生活情境：</strong>${escapeHtml(entry.answer_1 || "—")}</p>
+
+      <p><strong>反應／慣性：</strong>${escapeHtml(entry.answer_2 || "—")}</p>
+
+      <p><strong>我的看見：</strong>${escapeHtml(entry.answer_3 || "—")}</p>
+
+      <p><strong>所在階段：</strong>${escapeHtml(entry.answer_4 || "—")}</p>
+
+      <p><strong>本月選擇狀態：</strong>${escapeHtml(entry.monthly_answer || "—")}</p>
+
+      ${entry.additional_note
+        ? `<p><strong>想讓伊卡知道：</strong>${escapeHtml(entry.additional_note)}</p>`
+        : ""}
+    </div>
+  `;
+}).join("");
+
+return `
+  <div class="journey-item">
+    <h3>🌿 ${escapeHtml(name)}</h3>
+
+    <p>本月回饋：${entries.length} 次</p>
+
+    ${feedbackHistory}
+  </div>
+`;
   .join("");
     }
       
