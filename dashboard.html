@@ -405,7 +405,7 @@ async function loadDashboard() {
   try {
 
     const response = await fetch(
-      `${SUPABASE_URL}/rest/v1/feedback_overview?theme_month=eq.${encodeURIComponent(month)}&select=*`,
+      `${SUPABASE_URL}/rest/v1/particiant_feedback_overview?theme_month=eq.${encodeURIComponent(month)}&select=*`,
       {
         headers: {
           "apikey": SUPABASE_KEY,
