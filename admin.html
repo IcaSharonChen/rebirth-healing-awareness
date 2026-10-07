@@ -386,7 +386,71 @@ async function loadParticipantHistory(participantId, participantName) {
 
     const records = await response.json();
 
-    console.log("生命軌跡：", participantName, records);
+    let history = document.getElementById("participantHistory");
+
+if (!history) {
+  history = document.createElement("section");
+  history.id = "participantHistory";
+  history.style.marginTop = "28px";
+  history.style.paddingTop = "20px";
+  history.style.borderTop = "1px solid #d8ded9";
+
+  const list = document.getElementById("participantList");
+  list.parentElement.appendChild(history);
+}
+
+history.innerHTML = "";
+
+const title = document.createElement("h2");
+title.textContent = participantName + "｜生命軌跡";
+history.appendChild(title);
+
+if (!Array.isArray(records) || records.length === 0) {
+  const empty = document.createElement("p");
+  empty.textContent = "目前尚無覺察紀錄。";
+  history.appendChild(empty);
+  history.scrollIntoView({ behavior: "smooth" });
+  return;
+}
+
+records.forEach(record => {
+  const card = document.createElement("div");
+  card.style.padding = "16px 0";
+  card.style.borderBottom = "1px solid #e3e7e4";
+
+  const date = document.createElement("div");
+  date.style.fontWeight = "700";
+  date.style.marginBottom = "8px";
+  date.textContent = record.created_at
+    ? new Date(record.created_at).toLocaleString("zh-TW")
+    : "";
+
+  card.appendChild(date);
+
+  const fields = [
+    ["主題", record.theme_title],
+    ["覺察一", record.answer_1],
+    ["覺察二", record.answer_2],
+    ["覺察三", record.answer_3],
+    ["覺察四", record.answer_4],
+    ["本月覺察", record.monthly_answer],
+    ["補充紀錄", record.additional_note]
+  ];
+
+  fields.forEach(([label, value]) => {
+    if (value) {
+      const row = document.createElement("p");
+      row.style.whiteSpace = "pre-wrap";
+      row.style.lineHeight = "1.7";
+      row.textContent = label + "｜" + value;
+      card.appendChild(row);
+    }
+  });
+
+  history.appendChild(card);
+});
+
+history.scrollIntoView({ behavior: "smooth" });
 
   } catch (error) {
     console.error(error);
