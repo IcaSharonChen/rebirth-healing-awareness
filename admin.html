@@ -1,0 +1,656 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>重生療癒｜同行者管理</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Noto Sans TC", sans-serif;
+  background: #f5f2ec;
+  color: #303a35;
+}
+
+main {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 26px;
+  margin-bottom: 20px;
+  box-shadow: 0 8px 28px rgba(0,0,0,.07);
+}
+
+h1 {
+  font-size: 25px;
+  margin: 0 0 8px;
+}
+
+h2 {
+  font-size: 20px;
+  margin-top: 0;
+}
+
+p {
+  line-height: 1.7;
+  color: #68736e;
+}
+
+label {
+  display: block;
+  margin: 18px 0 7px;
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  border: 1px solid #ccd3cf;
+  border-radius: 10px;
+}
+
+button {
+  width: 100%;
+  margin-top: 18px;
+  padding: 14px;
+  border: 0;
+  border-radius: 10px;
+  background: #39765d;
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+button.secondary {
+  background: #e9eeeb;
+  color: #303a35;
+}
+
+button:disabled {
+  opacity: .55;
+}
+
+.message {
+  margin-top: 16px;
+  line-height: 1.6;
+}
+
+.error {
+  color: #a53b3b;
+}
+
+.ok {
+  color: #39765d;
+}
+
+.hidden {
+  display: none;
+}
+
+.linkbox {
+  margin-top: 18px;
+  padding: 14px;
+  background: #f3f6f4;
+  border-radius: 10px;
+  overflow-wrap: anywhere;
+  line-height: 1.6;
+}
+</style>
+</head>
+
+<body>
+
+<main>
+
+<section class="card">
+
+<h1>重生療癒｜同行者管理</h1>
+
+<p id="statusText">
+伊卡管理者登入
+</p>
+
+<form id="loginForm">
+
+<label for="email">Email</label>
+
+<input
+  id="email"
+  type="email"
+  autocomplete="username"
+  required
+>
+
+<label for="password">密碼</label>
+
+<input
+  id="password"
+  type="password"
+  autocomplete="current-password"
+  required
+>
+
+<button id="loginButton" type="submit">
+登入管理後台
+</button>
+
+</form>
+
+<div id="loginMessage" class="message"></div>
+
+</section>
+
+
+<section id="adminPanel" class="card hidden">
+
+<h2>新增同行者</h2>
+
+<p>
+建立同行者後，系統會自動產生專屬紀錄連結。
+</p>
+
+<form id="participantForm">
+
+<label for="displayName">同行者姓名</label>
+
+<input
+  id="displayName"
+  type="text"
+  required
+>
+
+<button id="createButton" type="submit">
+建立同行者
+</button>
+
+</form>
+
+<div id="createMessage" class="message"></div>
+
+<div id="resultBox" class="linkbox hidden">
+
+<div id="createdName"></div>
+
+<div id="personalLink"></div>
+
+<button
+  id="copyButton"
+  type="button"
+  class="secondary"
+>
+複製專屬連結
+</button>
+
+</div>
+
+<button
+  id="logoutButton"
+  type="button"
+  class="secondary"
+>
+登出管理後台
+</button>
+
+</section>
+
+</main>
+
+
+<script>
+
+const SUPABASE_URL =
+  "https://vysguxmncemrbujjmjby.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_JVbYICU0xkVuXN8JlQBgHA_-P6Id5Mr";
+
+const ICA_PARTICIPANT_ID =
+  "b88bbcc2-1f21-4341-9784-429fdd0478e5";
+
+const SESSION_KEY =
+  "rebirthAdminSession";
+
+
+const loginForm =
+  document.getElementById("loginForm");
+
+const adminPanel =
+  document.getElementById("adminPanel");
+
+const loginMessage =
+  document.getElementById("loginMessage");
+
+const statusText =
+  document.getElementById("statusText");
+
+
+function saveSession(data) {
+
+  localStorage.setItem(
+    SESSION_KEY,
+    JSON.stringify(data)
+  );
+
+}
+
+
+function getSession() {
+
+  try {
+
+    return JSON.parse(
+      localStorage.getItem(SESSION_KEY)
+    );
+
+  } catch {
+
+    return null;
+
+  }
+
+}
+
+
+function clearSession() {
+
+  localStorage.removeItem(SESSION_KEY);
+
+}
+
+
+async function verifyAdmin(accessToken) {
+
+  const response = await fetch(
+    `${SUPABASE_URL}/rest/v1/participants` +
+    `?id=eq.${ICA_PARTICIPANT_ID}` +
+    `&auth_user_id=eq.${getUserId(accessToken)}` +
+    `&select=id`,
+    {
+      headers: {
+        "apikey": SUPABASE_KEY,
+        "Authorization":
+          `Bearer ${accessToken}`
+      }
+    }
+  );
+
+  if (!response.ok) {
+    return false;
+  }
+
+  const rows = await response.json();
+
+  return rows.length === 1;
+
+}
+
+
+function getUserId(token) {
+
+  try {
+
+    const payload =
+      JSON.parse(
+        atob(
+          token
+            .split(".")[1]
+            .replace(/-/g, "+")
+            .replace(/_/g, "/")
+        )
+      );
+
+    return payload.sub;
+
+  } catch {
+
+    return "";
+
+  }
+
+}
+
+
+function showAdmin() {
+
+  loginForm.classList.add("hidden");
+
+  adminPanel.classList.remove("hidden");
+
+  statusText.textContent =
+    "伊卡管理者已登入";
+
+  loginMessage.className =
+    "message ok";
+
+  loginMessage.textContent =
+    "管理者身分確認完成。";
+
+}
+
+
+async function login(email, password) {
+
+  const response = await fetch(
+    `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
+    {
+      method: "POST",
+
+      headers: {
+        "apikey": SUPABASE_KEY,
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+        email,
+        password
+      })
+    }
+  );
+
+  const data = await response.json();
+
+  if (!response.ok ||
+      !data.access_token) {
+
+    throw new Error(
+      "登入失敗，請確認 Email 與密碼。"
+    );
+
+  }
+
+  const isAdmin =
+    await verifyAdmin(
+      data.access_token
+    );
+
+  if (!isAdmin) {
+
+    throw new Error(
+      "這個帳號沒有管理者權限。"
+    );
+
+  }
+
+  saveSession(data);
+
+  showAdmin();
+
+}
+
+
+loginForm.addEventListener(
+  "submit",
+  async event => {
+
+    event.preventDefault();
+
+    const button =
+      document.getElementById(
+        "loginButton"
+      );
+
+    button.disabled = true;
+
+    loginMessage.textContent = "";
+
+    try {
+
+      await login(
+        document
+          .getElementById("email")
+          .value
+          .trim(),
+
+        document
+          .getElementById("password")
+          .value
+      );
+
+    } catch (error) {
+
+      clearSession();
+
+      loginMessage.className =
+        "message error";
+
+      loginMessage.textContent =
+        error.message;
+
+    } finally {
+
+      button.disabled = false;
+
+    }
+
+  }
+);
+
+
+document
+  .getElementById("participantForm")
+  .addEventListener(
+    "submit",
+    async event => {
+
+      event.preventDefault();
+
+      const session =
+        getSession();
+
+      const createButton =
+        document.getElementById(
+          "createButton"
+        );
+
+      const createMessage =
+        document.getElementById(
+          "createMessage"
+        );
+
+      createButton.disabled = true;
+
+      createMessage.textContent = "";
+
+      try {
+
+        if (!session?.access_token) {
+
+          throw new Error(
+            "登入狀態已失效，請重新登入。"
+          );
+
+        }
+
+        const displayName =
+          document
+            .getElementById(
+              "displayName"
+            )
+            .value
+            .trim();
+
+        const response =
+          await fetch(
+            `${SUPABASE_URL}` +
+            `/rest/v1/rpc/create_participant`,
+            {
+              method: "POST",
+
+              headers: {
+                "apikey":
+                  SUPABASE_KEY,
+
+                "Authorization":
+                  `Bearer ${session.access_token}`,
+
+                "Content-Type":
+                  "application/json"
+              },
+
+              body: JSON.stringify({
+                p_display_name:
+                  displayName
+              })
+            }
+          );
+
+        const data =
+          await response.json();
+
+        if (!response.ok) {
+
+          throw new Error(
+            data.message ||
+            "建立同行者失敗。"
+          );
+
+        }
+
+        const participant =
+          Array.isArray(data)
+            ? data[0]
+            : data;
+
+        document
+          .getElementById(
+            "createdName"
+          )
+          .textContent =
+            `同行者：${participant.display_name}`;
+
+        document
+          .getElementById(
+            "personalLink"
+          )
+          .textContent =
+            participant.personal_link;
+
+        document
+          .getElementById(
+            "resultBox"
+          )
+          .classList
+          .remove("hidden");
+
+        createMessage.className =
+          "message ok";
+
+        createMessage.textContent =
+          "同行者建立成功。";
+
+        document
+          .getElementById(
+            "displayName"
+          )
+          .value = "";
+
+      } catch (error) {
+
+        createMessage.className =
+          "message error";
+
+        createMessage.textContent =
+          error.message;
+
+      } finally {
+
+        createButton.disabled =
+          false;
+
+      }
+
+    }
+  );
+
+
+document
+  .getElementById("copyButton")
+  .addEventListener(
+    "click",
+    async () => {
+
+      const link =
+        document
+          .getElementById(
+            "personalLink"
+          )
+          .textContent;
+
+      await navigator
+        .clipboard
+        .writeText(link);
+
+      document
+        .getElementById(
+          "copyButton"
+        )
+        .textContent =
+          "已複製專屬連結";
+
+    }
+  );
+
+
+document
+  .getElementById("logoutButton")
+  .addEventListener(
+    "click",
+    () => {
+
+      clearSession();
+
+      location.reload();
+
+    }
+  );
+
+
+(async function restoreLogin() {
+
+  const session =
+    getSession();
+
+  if (!session?.access_token) {
+    return;
+  }
+
+  try {
+
+    const isAdmin =
+      await verifyAdmin(
+        session.access_token
+      );
+
+    if (isAdmin) {
+
+      showAdmin();
+
+    } else {
+
+      clearSession();
+
+    }
+
+  } catch {
+
+    clearSession();
+
+  }
+
+})();
+
+</script>
+
+</body>
+</html>
