@@ -339,10 +339,107 @@ function showAdmin() {
   loginMessage.textContent =
     "管理者身分確認完成。";
 
+  loadParticipantList();
 }
 
 
-async function login(email, password) {
+async function loadParticipantList() {
+
+  const list =
+    document.getElementById("participantList");
+
+  const session = getSession();
+
+  if (!session?.access_token) {
+    list.textContent = "請先登入管理後台。";
+    return;
+  }
+
+  list.textContent = "正在載入同行者名單……";
+
+  try {
+
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/rpc/admin_list_participants`,
+      {
+        method: "POST",
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization":
+            `Bearer ${session.access_token}`,
+          "Content-Type": "application/json"
+        },
+        body: "{}"
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.message || "無法讀取同行者名單。"
+      );
+    }
+
+    list.innerHTML = "";
+
+    if (!Array.isArray(data) || data.length === 0) {
+      list.textContent = "目前尚無同行者。";
+      return;
+    }
+
+    data.forEach(participant => {
+
+      const item = document.createElement("div");
+
+      item.style.padding = "14px 0";
+      item.style.borderBottom =
+        "1px solid #e3e7e4";
+
+      const name =
+        document.createElement("div");
+
+      name.textContent =
+        participant.display_name;
+
+      name.style.fontWeight = "700";
+      name.style.fontSize = "17px";
+
+      const copy =
+        document.createElement("button");
+
+      copy.type = "button";
+      copy.className = "secondary";
+      copy.textContent = "複製專屬連結";
+      copy.style.marginTop = "10px";
+
+      copy.addEventListener(
+        "click",
+        async () => {
+
+          await navigator.clipboard.writeText(
+            participant.personal_link
+          );
+
+          copy.textContent = "已複製專屬連結";
+
+        }
+      );
+
+      item.appendChild(name);
+      item.appendChild(copy);
+      list.appendChild(item);
+
+    });
+
+  } catch (error) {
+
+    list.textContent = error.message;
+
+  }
+
+}
+  async function login(email, password) {
 
   const response = await fetch(
     `${SUPABASE_URL}/auth/v1/token?grant_type=password`,
