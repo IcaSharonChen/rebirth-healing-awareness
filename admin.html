@@ -455,7 +455,15 @@ async function loadParticipantList() {
 
       name.style.fontWeight = "700";
       name.style.fontSize = "17px";
+name.style.cursor = "pointer";
+name.style.textDecoration = "underline";
 
+name.addEventListener("click", () => {
+  loadParticipantHistory(
+    participant.id,
+    participant.display_name
+  );
+});
       const copy =
         document.createElement("button");
 
