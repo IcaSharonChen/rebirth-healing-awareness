@@ -351,10 +351,53 @@
     const successBox = document.getElementById("successBox");
     const participantId = new URLSearchParams(window.location.search).get("pid");
 
-    const savedName = localStorage.getItem("rebirthParticipantName");
-    if (savedName) {
-      document.getElementById("participantName").value = savedName;
+    async function loadParticipantIdentity() {
+  const nameInput = document.getElementById("participantName");
+
+  if (!participantId) {
+    nameInput.value = "";
+    nameInput.disabled = true;
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/rpc/get_participant_display_name`,
+      {
+        method: "POST",
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          p_id: participantId
+        })
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("無法辨識使用者");
     }
+
+    const displayName = await response.json();
+
+    if (!displayName) {
+      throw new Error("找不到使用者");
+    }
+
+    nameInput.value = displayName;
+    nameInput.readOnly = true;
+
+  } catch (error) {
+    nameInput.value = "";
+    nameInput.disabled = true;
+    message.textContent =
+      "目前無法辨識這個專屬連結，請向伊卡確認連結是否正確。";
+    message.className = "message error";
+  }
+}
+
+loadParticipantIdentity();
 
     form.addEventListener("submit", async function (event) {
       event.preventDefault();
@@ -432,11 +475,6 @@
         if (!response.ok) {
           throw new Error("資料送出失敗");
         }
-
-        localStorage.setItem(
-          "rebirthParticipantName",
-          participantName
-        );
 
         form.style.display = "none";
         successBox.style.display = "block";
