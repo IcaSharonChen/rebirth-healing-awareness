@@ -390,8 +390,7 @@ async function loadParticipantHistory(participantId, participantName) {
 
   } catch (error) {
     console.error(error);
-    alert("目前無法讀取這位同行者的生命軌跡。");
-  }
+    alert("讀取失敗：" + error.message);
 }
 
 async function loadParticipantList() {
