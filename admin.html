@@ -355,7 +355,44 @@ function showAdmin() {
 
   loadParticipantList();
 }
+async function loadParticipantHistory(participantId, participantName) {
+  const session = getSession();
 
+  if (!session?.access_token) {
+    alert("請先登入管理後台。");
+    return;
+  }
+
+  try {
+    const response = await fetch(
+      `${SUPABASE_URL}/rest/v1/rpc/admin_get_participant_history`,
+      {
+        method: "POST",
+        headers: {
+          "apikey": SUPABASE_KEY,
+          "Authorization": `Bearer ${session.access_token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          p_participant_id: participantId
+        })
+      }
+    );
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(errorText || "無法讀取生命軌跡");
+    }
+
+    const records = await response.json();
+
+    console.log("生命軌跡：", participantName, records);
+
+  } catch (error) {
+    console.error(error);
+    alert("目前無法讀取這位同行者的生命軌跡。");
+  }
+}
 
 async function loadParticipantList() {
 
