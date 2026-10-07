@@ -349,6 +349,7 @@
     const button = document.getElementById("submitButton");
     const message = document.getElementById("formMessage");
     const successBox = document.getElementById("successBox");
+    const participantId = new URLSearchParams(window.location.search).get("pid");
 
     const savedName = localStorage.getItem("rebirthParticipantName");
     if (savedName) {
@@ -357,6 +358,11 @@
 
     form.addEventListener("submit", async function (event) {
       event.preventDefault();
+        if (!participantId) {
+    message.textContent = "這個連結沒有使用者識別資訊，請使用你的專屬紀錄連結。";
+    message.className = "message error";
+    return;
+        }
 
       const participantName =
         document.getElementById("participantName").value.trim();
@@ -398,7 +404,7 @@
 
       const payload = {
         participant_name: participantName,
-        participant_id: "b88bbcc2-1f21-4341-9784-429fdd0478e5",
+        participant_id: participantId,
         theme_month: "2026-10",
         theme_title: "開始為自己做選擇",
         answer_1: answer1,
